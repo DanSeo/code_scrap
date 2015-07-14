@@ -1,0 +1,40 @@
+require 'nokogiri'
+require 'json'
+
+def remove_quotations(str)
+  if str.start_with?('"')
+    str = str.slice(1..-1)
+  end
+  if str.end_with?('"')
+    str = str.slice(0..-2)
+  end
+
+  str
+end
+
+def get_inner_text(html)
+   Nokogiri::HTML(html).xpath("//text()").text
+end
+
+def extract(filename)
+
+page = Nokogiri::HTML(open(filename))
+articleList = page.css("article.article")
+result = Array.new
+
+articleList.each do |node|
+  # TODO 코드를 넣어주세요..
+  result
+end
+
+def get_filename_in_dir(path, is_file)
+	files = Dir.entries path
+	results = []
+	files.each do |f|
+		if File.file? (path + f) && is_file
+			results.push(path + f)	
+		end
+	end
+	results
+end
+

@@ -1,0 +1,57 @@
+import sqlite3 
+import json
+import os
+import codecs
+import sys
+"""
+ 테이블 생성 및 삽입 쿼리 생성 하는 코드 
+ 디렉터리내 모든 파일을 구해서 테이블과 삽입 쿼리를 생성한다.
+"""
+
+
+# json 파일 파싱 
+def parseJson (fileName):
+	with codecs.open(fileName, 'r', encoding='utf-8') as f:
+		return json.load(f, encoding='utf-8')
+
+def insertQuery(con, table_name, headers, arrays):
+	cursor = con.cursor()
+	sql = "INSERT INTO " + table + " ( "
+	for i in range(len(headers)):
+		if i == 0:
+			sql += ", "
+		sql += headers[i]
+	sql += " ) VALUES ( ? , ? , ? , ? , ?, ?, ? ) "
+	cursor.execute(sql, arrays) 
+	con.commit()
+
+def createTable(con, query):
+	cursor = con.cursor()
+	cursor.execute(query)
+	con.commit()
+dbFile = argv[1]
+ddl = argv[2]
+parentName = argv[3]
+
+files = [f for f in os.listdir(".") if os.path.isfile(f) and not f.endswith(".db") ]
+
+jsons = [parseJson(data) for data in files]
+
+create_table_query  = ddl
+
+con = sqlite3.connect(dbFile)
+try:
+	createTable(con, create_table_query)
+
+	for data in jsons:
+		try:
+			childList = data[parentName]
+			for current in childList:
+				# TODO insertQuery
+				pass
+		except :
+			pass
+
+
+finally:
+	con.close()

@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+__author__ = 'danielseo'
+
+import json
+import os
+import sys
+import datetime
+import subprocess
+import time
+import sqlite3
+from urlparse import urlparse
+import codecs
+
+
+wf = codecs.open("test.sh", "w", encoding="utf-8")
+try:
+    with codecs.open("input.json", "r", encoding="utf-8") as f:
+        data = json.load(f, encoding='utf-8')
+        nodes = data["nodes"]
+        wf.write("#!/bin/bash\n")
+        for i in range(len(nodes)):
+            current = nodes[i]
+            wf.write("curl -o %d.file %s  \n" % (i, current["link"]) )
+            if i % 5 == 0:
+                wf.write("wait\n")
+        wf.write("wait\n")
+finally:
+     wf.close()
