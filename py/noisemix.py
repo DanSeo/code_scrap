@@ -29,9 +29,9 @@ def load_noise_wavefile(filename: str):
     rate, amptitude = wavfile.read(filename)
     return rate, amptitude
 
-@njit(fastmath=True)
+@jit(forceobj=True)
 def calculate_rms(amp):
-    return np.sqrt(np.mean(np.square(amp)))
+    return np.sqrt(np.mean(np.square(amp), axis=-1))
 
 
 def save_waveform(output_path, rate, amp):
@@ -68,13 +68,11 @@ def split_noise(clean_amp, noise_amp, start):
     return divided_noise_amp
 
 
-@njit(fastmath=True, cache=True)
+@jit(forceobj=True)
 def normalize_mixed_amp(mixed_amp):
     max_int16 = np.iinfo(np.int16).max
-    mixed_amp_max_val = mixed_amp.max()
+    mixed_amp_max_val = mixed_amp.max(axis=0)
     if mixed_amp_max_val > max_int16:
-        if mixed_amp_max_val == 0:
-            mixed_amp_max_val = 1
         reduction_rate = max_int16 / mixed_amp_max_val
         mixed_amp = mixed_amp * (reduction_rate)
     return mixed_amp
@@ -158,7 +156,7 @@ def mix_noise_lists(clean_files,
     return mix_results
 
 
-def make_output_filenames(output_path):
+def make_output_filenames(output_path, clean_files):
     output_filenames = []
     if not os.path.exists(output_path):
         os.makedirs(output_path, exist_ok=True)
