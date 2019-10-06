@@ -86,11 +86,11 @@ class ExperimentsResults:
                 target = self._results[self._results[group_by] == cur_group]
                 tprfarfrr = self._cal_tprfarfrr(target, step, tprfarfrr, true_label_name, len(group_lists), idx, cur_group)
             return pd.DataFrame(tprfarfrr,
-                                    columns=[group_by,"threshold", "keyword_index", "tpr", "far", "frr", "tp", "tn", "fp", "fn"])
+                                    columns=[group_by,"threshold", "label_index", "tpr", "far", "frr", "tp", "tn", "fp", "fn"])
         else:
             tprfarfrr = self._cal_tprfarfrr(self._results, step, tprfarfrr, true_label_name)
 
-            return pd.DataFrame(tprfarfrr, columns=["threshold", "keyword_index" ,"tpr", "far", "frr", "tp", "tn", "fp", "fn"])
+            return pd.DataFrame(tprfarfrr, columns=["threshold", "label_index" ,"tpr", "far", "frr", "tp", "tn", "fp", "fn"])
 
     def _cal_tprfarfrr(self, target_df, step, tprfarfrr, true_label_name, group_list_count=0, group_idx=0, current_group=None):
         total = len(list(np.arange(0.0, 1.0, step))) * len(self._class_names)
